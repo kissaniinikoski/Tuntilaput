@@ -1,35 +1,795 @@
-# Gradle files
-.gradle/
-build/
-.kotlin/
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0d0c0b" />
+  <meta name="color-scheme" content="dark" />
+  <link rel="manifest" href="manifest.json" />
+  <title>Tuntilaput — Sami Niinikoski</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg-dark: #0b0a09;
+      --panel-bg: #110f0e;
+      --input-bg: #0e0d0c;
+      --text-main: #f5f2eb;
+      --text-muted: #b7afa2;
+      --accent-gold: #e6be5a;
+      --accent-green: #168a5c;
+      --chrome-gold-border: linear-gradient(135deg, #c9d1d9 0%, #f5d378 32%, #b8861e 52%, #fff0b8 72%, #aeb8c2 100%);
+    }
 
-# Local configuration file (sdk path, etc)
-local.properties
+    * {
+      box-sizing: border-box;
+    }
 
-# Log/OS Files
-*.log
+    body {
+      margin: 0;
+      padding: 16px;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+    }
 
-# Android Studio generated files and folders
-captures/
-.externalNativeBuild/
-.cxx/
-*.aab
-*.apk
-output-metadata.json
+    .app-wrap {
+      max-width: 780px;
+      margin: 0 auto;
+    }
 
-# IntelliJ
-*.iml
-.idea/
-misc.xml
-deploymentTargetDropDown.xml
-render.experimental.xml
+    .metallic-box {
+      position: relative;
+      background: var(--panel-bg);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 14px;
+      border: 2px solid transparent;
+      background-clip: padding-box;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55);
+    }
 
-# Keystore files
-*.jks
-*.keystore
+    .metallic-box::before {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      border-radius: 15px;
+      background: var(--chrome-gold-border);
+      z-index: -1;
+    }
 
-# Google Services (e.g. APIs or Firebase)
-google-services.json
+    .header-row {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
 
-# Android Profiling
-*.hprof
+    .header-title {
+      margin: 0;
+      font-size: 1.45rem;
+      letter-spacing: 0.04em;
+      color: var(--accent-gold);
+    }
+
+    .header-sub {
+      margin: 2px 0 0;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    input, select, button {
+      font-family: inherit;
+      font-size: 0.95rem;
+    }
+
+    input[type="text"],
+    input[type="time"],
+    input[type="number"],
+    select {
+      width: 100%;
+      padding: 9px 10px;
+      border-radius: 8px;
+      background: var(--input-bg);
+      color: var(--text-main);
+      color-scheme: dark;
+      border: 1.5px solid #c99e38;
+    }
+
+    .week-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .day-card {
+      padding: 14px;
+    }
+
+    .day-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      gap: 8px;
+    }
+
+    .day-title {
+      font-weight: 700;
+      color: var(--accent-gold);
+    }
+
+    .day-hours {
+      font-weight: 700;
+      background: #1a1714;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid #c99e38;
+      font-size: 0.88rem;
+    }
+
+    .day-fields {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 10px;
+    }
+
+    .break-presets {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .preset-btn {
+      padding: 4px 8px;
+      font-size: 0.78rem;
+      border-radius: 6px;
+      background: #1b1815;
+      color: var(--text-main);
+      border: 1px solid #8c6d23;
+      cursor: pointer;
+    }
+
+    .actions-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .btn {
+      padding: 10px 14px;
+      border-radius: 9px;
+      border: 1.5px solid #e6be5a;
+      background: #1d1914;
+      color: var(--text-main);
+      font-weight: 600;
+      cursor: pointer;
+      max-width: 100%;
+      white-space: normal;
+      word-break: break-word;
+    }
+
+    .btn-primary {
+      background: #d49b27;
+      color: #11100d;
+      border-color: #fff0b8;
+    }
+
+    .btn-green {
+      background: var(--accent-green);
+      color: #ffffff;
+      border-color: #7ee2b8;
+    }
+
+    .btn-danger {
+      background: #3a1616;
+      color: #ffd4d4;
+      border-color: #b84a4a;
+    }
+
+    .pdf-box {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 10px;
+      background: #141210;
+      border: 1px solid #d49b27;
+    }
+
+    .file-list-item {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      padding: 10px;
+      border-radius: 8px;
+      background: #0d0c0b;
+      border: 1px solid #6b541d;
+      margin-bottom: 8px;
+    }
+
+    .copyright {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin: 18px 0 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-wrap">
+    <div class="metallic-box">
+      <div class="header-row">
+        <div>
+          <h1 class="header-title">TUNTILAPUT</h1>
+          <p class="header-sub">Ajopäiväkirja &amp; Työtunnit</p>
+        </div>
+        <div class="top-actions">
+          <button type="button" class="btn" id="btn-toggle-files">Tallennetut tiedostot (<span id="saved-count">0</span>)</button>
+          <button type="button" class="btn" id="btn-open-draft">Avaa keskeneräinen (<span id="draft-count">0</span>)</button>
+        </div>
+      </div>
+
+      <div class="week-bar">
+        <button type="button" class="btn" id="btn-prev-week">◀</button>
+        <select id="week-selector" aria-label="Valitse viikko"></select>
+        <button type="button" class="btn" id="btn-next-week">▶</button>
+      </div>
+
+      <div class="grid-2" style="margin-top: 12px;">
+        <div>
+          <label for="driver-name">Kuljettaja</label>
+          <input type="text" id="driver-name" placeholder="Esim. Sami Niinikoski" />
+        </div>
+        <div>
+          <label for="vehicle-reg">Rekisterinumero</label>
+          <input type="text" id="vehicle-reg" placeholder="Esim. ABC-123" />
+        </div>
+      </div>
+    </div>
+
+    <div id="days-container"></div>
+
+    <div class="metallic-box">
+      <div class="day-top">
+        <span class="day-title">Viikon työtunnit yhteensä</span>
+        <span class="day-hours" id="week-total">0,00 h</span>
+      </div>
+
+      <div class="actions-grid">
+        <button type="button" class="btn" id="btn-save-draft">Tallenna keskeneräinen</button>
+        <button type="button" class="btn btn-primary" id="btn-finish-pdf">Lopeta viikko ja tallenna PDF:ksi</button>
+        <button type="button" class="btn" id="btn-save-partial-pdf">Tallenna keskeneräinen PDF:nä</button>
+        <button type="button" class="btn btn-green" id="btn-share-wa">Jaa WhatsAppissa</button>
+        <button type="button" class="btn btn-danger" id="btn-clear-form">Tyhjennä lomake</button>
+      </div>
+
+      <div id="pdf-result-area"></div>
+    </div>
+
+    <div class="metallic-box" id="saved-files-panel" style="display: none;">
+      <h2 class="header-title" style="font-size: 1.1rem; margin-top: 0;">Tallennetut PDF-tiedostot ja luonnokset</h2>
+      <div id="saved-files-list"></div>
+    </div>
+
+    <div class="copyright">© Copyright by Sami Niinikoski</div>
+  </div>
+
+  <script>
+    const DAY_NAMES = [
+      { short: "ma", full: "Maanantai" },
+      { short: "ti", full: "Tiistai" },
+      { short: "ke", full: "Keskiviikko" },
+      { short: "to", full: "Torstai" },
+      { short: "pe", full: "Perjantai" },
+      { short: "la", full: "Lauantai" },
+      { short: "su", full: "Sunnuntai" }
+    ];
+
+    const STORAGE_DRAFTS_KEY = "tuntilaput_drafts_v1";
+    const STORAGE_PDFS_KEY = "tuntilaput_pdfs_v1";
+    const STORAGE_META_KEY = "tuntilaput_meta_v1";
+
+    function getMondayOfWeek(date) {
+      const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      const day = d.getDay();
+      const diff = day === 0 ? -6 : 1 - day;
+      d.setDate(d.getDate() + diff);
+      d.setHours(0, 0, 0, 0);
+      return d;
+    }
+
+    function getISOWeekNumber(mondayDate) {
+      const target = new Date(mondayDate.valueOf());
+      const dayNr = (mondayDate.getDay() + 6) % 7;
+      target.setDate(target.getDate() - dayNr + 3);
+      const firstThursday = target.valueOf();
+      target.setMonth(0, 1);
+      if (target.getDay() !== 4) {
+        target.setMonth(0, 1 + ((4 - target.getDay()) + 7) % 7);
+      }
+      const week = 1 + Math.ceil((firstThursday - target) / 604800000);
+      return { week, year: mondayDate.getFullYear() };
+    }
+
+    function formatFinnishDate(d) {
+      return `${d.getDate()}.${d.getMonth() + 1}.${d.getFullYear()}`;
+    }
+
+    function calcDayHours(startStr, endStr, breakMin) {
+      if (!startStr || !endStr) return 0;
+      const [sh, sm] = startStr.split(":").map(Number);
+      const [eh, em] = endStr.split(":").map(Number);
+      if ([sh, sm, eh, em].some(Number.isNaN)) return 0;
+      let startMins = sh * 60 + sm;
+      let endMins = eh * 60 + em;
+      if (endMins < startMins) endMins += 24 * 60;
+      const workMins = Math.max(0, endMins - startMins - (Number(breakMin) || 0));
+      return workMins / 60;
+    }
+
+    function formatHours(h) {
+      return `${h.toFixed(2).replace(".", ",")} h`;
+    }
+
+    const currentMonday = getMondayOfWeek(new Date());
+    let selectedWeekOffset = 0;
+
+    let state = {
+      driver: "",
+      vehicle: "",
+      days: Array.from({ length: 7 }, () => ({
+        worksite: "",
+        start: "",
+        end: "",
+        breakMin: 0
+      }))
+    };
+
+    function loadSavedMeta() {
+      try {
+        const meta = JSON.parse(localStorage.getItem(STORAGE_META_KEY) || "{}");
+        if (meta.driver) state.driver = meta.driver;
+        if (meta.vehicle) state.vehicle = meta.vehicle;
+      } catch (_) {}
+    }
+
+    function saveMeta() {
+      try {
+        localStorage.setItem(STORAGE_META_KEY, JSON.stringify({
+          driver: state.driver,
+          vehicle: state.vehicle
+        }));
+      } catch (_) {}
+    }
+
+    function getDrafts() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_DRAFTS_KEY) || "[]");
+      } catch (_) {
+        return [];
+      }
+    }
+
+    function setDrafts(list) {
+      localStorage.setItem(STORAGE_DRAFTS_KEY, JSON.stringify(list));
+      updateCounts();
+    }
+
+    function getSavedPdfs() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_PDFS_KEY) || "[]");
+      } catch (_) {
+        return [];
+      }
+    }
+
+    function setSavedPdfs(list) {
+      localStorage.setItem(STORAGE_PDFS_KEY, JSON.stringify(list));
+      updateCounts();
+      renderSavedFilesList();
+    }
+
+    function updateCounts() {
+      document.getElementById("draft-count").textContent = String(getDrafts().length);
+      document.getElementById("saved-count").textContent = String(getSavedPdfs().length);
+    }
+
+    function getActiveMonday() {
+      const d = new Date(currentMonday.valueOf());
+      d.setDate(d.getDate() + selectedWeekOffset * 7);
+      return d;
+    }
+
+    function populateWeekSelector() {
+      const sel = document.getElementById("week-selector");
+      sel.innerHTML = "";
+      for (let offset = -12; offset <= 4; offset++) {
+        const mon = new Date(currentMonday.valueOf());
+        mon.setDate(mon.getDate() + offset * 7);
+        const { week, year } = getISOWeekNumber(mon);
+        const opt = document.createElement("option");
+        opt.value = String(offset);
+        opt.textContent = offset === 0
+          ? `Viikko ${week} / ${year} (Kuluva viikko)`
+          : `Viikko ${week} / ${year}`;
+        if (offset === selectedWeekOffset) opt.selected = true;
+        sel.appendChild(opt);
+      }
+    }
+
+    function renderDays() {
+      const container = document.getElementById("days-container");
+      container.innerHTML = "";
+      const monday = getActiveMonday();
+      let totalHours = 0;
+
+      DAY_NAMES.forEach((dayInfo, idx) => {
+        const dayDate = new Date(monday.valueOf());
+        dayDate.setDate(dayDate.getDate() + idx);
+        const dData = state.days[idx];
+        const hours = calcDayHours(dData.start, dData.end, dData.breakMin);
+        totalHours += hours;
+
+        const card = document.createElement("div");
+        card.className = "metallic-box day-card";
+        card.innerHTML = `
+          <div class="day-top">
+            <span class="day-title">${dayInfo.short} ${dayInfo.full} ${formatFinnishDate(dayDate)}</span>
+            <span class="day-hours">${formatHours(hours)}</span>
+          </div>
+          <div style="margin-bottom: 10px;">
+            <label for="worksite-${idx}">Työmaa / Ajo</label>
+            <input type="text" id="worksite-${idx}" value="${escapeHtml(dData.worksite)}" placeholder="Työmaa tai ajoreitti" />
+          </div>
+          <div class="day-fields">
+            <div>
+              <label for="start-${idx}">Aloitusaika</label>
+              <input type="time" id="start-${idx}" value="${dData.start}" />
+            </div>
+            <div>
+              <label for="end-${idx}">Lopetusaika</label>
+              <input type="time" id="end-${idx}" value="${dData.end}" />
+            </div>
+            <div>
+              <label for="break-${idx}">Tauko (min)</label>
+              <input type="number" min="0" step="5" id="break-${idx}" value="${dData.breakMin}" />
+            </div>
+          </div>
+          <div class="break-presets">
+            <button type="button" class="preset-btn" data-idx="${idx}" data-min="0">0 min</button>
+            <button type="button" class="preset-btn" data-idx="${idx}" data-min="15">15 min</button>
+            <button type="button" class="preset-btn" data-idx="${idx}" data-min="30">30 min</button>
+            <button type="button" class="preset-btn" data-idx="${idx}" data-min="45">45 min</button>
+            <button type="button" class="preset-btn" data-idx="${idx}" data-min="60">60 min</button>
+          </div>
+        `;
+        container.appendChild(card);
+
+        card.querySelector(`#worksite-${idx}`).addEventListener("input", (e) => {
+          state.days[idx].worksite = e.target.value;
+        });
+        card.querySelector(`#start-${idx}`).addEventListener("input", (e) => {
+          state.days[idx].start = e.target.value;
+          renderDays();
+        });
+        card.querySelector(`#end-${idx}`).addEventListener("input", (e) => {
+          state.days[idx].end = e.target.value;
+          renderDays();
+        });
+        card.querySelector(`#break-${idx}`).addEventListener("input", (e) => {
+          state.days[idx].breakMin = Number(e.target.value) || 0;
+          renderDays();
+        });
+      });
+
+      container.querySelectorAll(".preset-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const i = Number(btn.dataset.idx);
+          state.days[i].breakMin = Number(btn.dataset.min);
+          renderDays();
+        });
+      });
+
+      document.getElementById("week-total").textContent = formatHours(totalHours);
+    }
+
+    function escapeHtml(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/"/g, "&quot;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
+
+    function sanitizePdfText(str) {
+      return String(str || "")
+        .replace(/ä/g, "a").replace(/Ä/g, "A")
+        .replace(/ö/g, "o").replace(/Ö/g, "O")
+        .replace(/å/g, "a").replace(/Å/g, "A")
+        .replace(/[^\x20-\x7E]/g, "-")
+        .replace(/\\/g, "\\\\")
+        .replace(/\(/g, "\\(")
+        .replace(/\)/g, "\\)");
+    }
+
+    function buildPdfBase64(isPartial) {
+      const monday = getActiveMonday();
+      const { week, year } = getISOWeekNumber(monday);
+      const lines = [];
+      lines.push(`TUNTILAPPU - VIIKKO ${week} / ${year}${isPartial ? " (KESKENERAINEN)" : ""}`);
+      lines.push(`Kuljettaja: ${state.driver || "-"}   Rekisterinumero: ${state.vehicle || "-"}`);
+      lines.push("----------------------------------------------------------------");
+
+      let total = 0;
+      DAY_NAMES.forEach((d, idx) => {
+        const dt = new Date(monday.valueOf());
+        dt.setDate(dt.getDate() + idx);
+        const item = state.days[idx];
+        const h = calcDayHours(item.start, item.end, item.breakMin);
+        total += h;
+        const slot = item.start && item.end ? `${item.start}-${item.end} (tauko ${item.breakMin} min)` : "Ei merkintaa";
+        const ws = item.worksite ? ` | ${item.worksite}` : "";
+        lines.push(`${d.short} ${formatFinnishDate(dt)}: ${slot}${ws} -> ${h.toFixed(2)} h`);
+      });
+
+      lines.push("----------------------------------------------------------------");
+      lines.push(`YHTEENSA: ${total.toFixed(2)} h`);
+      lines.push("Copyright by Sami Niinikoski");
+
+      let streamOps = "BT\n/F1 10 Tf\n40 790 Td\n14 TL\n";
+      lines.forEach((line, idx) => {
+        const clean = sanitizePdfText(line);
+        if (idx === 0) {
+          streamOps += `(${clean}) Tj\n`;
+        } else {
+          streamOps += `T* (${clean}) Tj\n`;
+        }
+      });
+      streamOps += "ET\n";
+
+      const objects = [];
+      objects.push("1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n");
+      objects.push("2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n");
+      objects.push("3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>\nendobj\n");
+      objects.push("4 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj\n");
+      objects.push(`5 0 obj\n<< /Length ${streamOps.length} >>\nstream\n${streamOps}endstream\nendobj\n`);
+
+      let pdf = "%PDF-1.4\n";
+      const offsets = [0];
+      for (const obj of objects) {
+        offsets.push(pdf.length);
+        pdf += obj;
+      }
+      const xrefPos = pdf.length;
+      pdf += `xref\n0 ${objects.length + 1}\n`;
+      pdf += "0000000000 65535 f \n";
+      for (let i = 1; i <= objects.length; i++) {
+        pdf += `${String(offsets[i]).padStart(10, "0")} 00000 n \n`;
+      }
+      pdf += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xrefPos}\n%%EOF`;
+
+      const bytes = new Uint8Array(pdf.length);
+      for (let i = 0; i < pdf.length; i++) {
+        bytes[i] = pdf.charCodeAt(i) & 0xff;
+      }
+      let bin = "";
+      for (let i = 0; i < bytes.length; i++) {
+        bin += String.fromCharCode(bytes[i]);
+      }
+      return btoa(bin);
+    }
+
+    function createPdfRecord(isPartial) {
+      const monday = getActiveMonday();
+      const { week, year } = getISOWeekNumber(monday);
+      const existing = getSavedPdfs();
+      const suffix = isPartial ? `keskenerainen_${existing.length + 1}` : `${existing.length + 1}`;
+      const filename = `Tuntilappu_vko${week}_${year}_${suffix}.pdf`;
+      const base64 = buildPdfBase64(isPartial);
+      const record = {
+        id: String(Date.now()),
+        filename,
+        weekLabel: `Viikko ${week} / ${year}${isPartial ? " (Keskeneräinen)" : ""}`,
+        createdAt: new Date().toLocaleString("fi-FI"),
+        base64
+      };
+      existing.unshift(record);
+      setSavedPdfs(existing);
+      return record;
+    }
+
+    function showPdfActionBox(record) {
+      const dataUrl = `data:application/pdf;base64,${record.base64}`;
+      const box = document.getElementById("pdf-result-area");
+      box.innerHTML = `
+        <div class="pdf-box">
+          <div style="font-weight: 700; margin-bottom: 8px; color: var(--accent-gold);">${escapeHtml(record.filename)}</div>
+          <div class="actions-grid">
+            <a class="btn btn-primary" href="${dataUrl}" target="_blank" rel="noopener" style="text-decoration: none;">Avaa PDF selaimessa</a>
+            <a class="btn btn-green" href="${dataUrl}" download="${escapeHtml(record.filename)}" style="text-decoration: none;">Lataa PDF-tiedosto (${escapeHtml(record.filename)})</a>
+          </div>
+        </div>
+      `;
+    }
+
+    async function shareRecordToWhatsApp(record) {
+      const dataUrl = `data:application/pdf;base64,${record.base64}`;
+      try {
+        const res = await fetch(dataUrl);
+        const blob = await res.blob();
+        const file = new File([blob], record.filename, { type: "application/pdf" });
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            title: record.filename,
+            text: `Tuntilappu: ${record.weekLabel}`,
+            files: [file]
+          });
+          return;
+        }
+      } catch (_) {}
+
+      const dlLink = document.createElement("a");
+      dlLink.href = dataUrl;
+      dlLink.download = record.filename;
+      document.body.appendChild(dlLink);
+      dlLink.click();
+      dlLink.remove();
+
+      const msg = encodeURIComponent(`Tuntilappu (${record.weekLabel}) - tiedosto: ${record.filename}`);
+      window.open(`https://api.whatsapp.com/send?text=${msg}`, "_blank", "noopener");
+    }
+
+    function renderSavedFilesList() {
+      const listEl = document.getElementById("saved-files-list");
+      const pdfs = getSavedPdfs();
+      if (!pdfs.length) {
+        listEl.innerHTML = `<p class="header-sub">Ei tallennettuja PDF-tiedostoja vielä.</p>`;
+        return;
+      }
+      listEl.innerHTML = "";
+      pdfs.forEach((rec) => {
+        const dataUrl = `data:application/pdf;base64,${rec.base64}`;
+        const row = document.createElement("div");
+        row.className = "file-list-item";
+        row.innerHTML = `
+          <div>
+            <div style="font-weight: 700;">${escapeHtml(rec.filename)}</div>
+            <div class="header-sub">${escapeHtml(rec.weekLabel)} • ${escapeHtml(rec.createdAt)}</div>
+          </div>
+          <div class="actions-grid">
+            <a class="btn" href="${dataUrl}" target="_blank" rel="noopener" style="text-decoration: none;">Avaa</a>
+            <a class="btn" href="${dataUrl}" download="${escapeHtml(rec.filename)}" style="text-decoration: none;">Lataa</a>
+            <button type="button" class="btn btn-green wa-item-btn">Jaa WhatsAppissa</button>
+          </div>
+        `;
+        row.querySelector(".wa-item-btn").addEventListener("click", () => shareRecordToWhatsApp(rec));
+        listEl.appendChild(row);
+      });
+    }
+
+    function clearFormForNewWeek() {
+      state.days = Array.from({ length: 7 }, () => ({
+        worksite: "",
+        start: "",
+        end: "",
+        breakMin: 0
+      }));
+      selectedWeekOffset = 0;
+      populateWeekSelector();
+      renderDays();
+    }
+
+    document.getElementById("driver-name").addEventListener("input", (e) => {
+      state.driver = e.target.value;
+      saveMeta();
+    });
+
+    document.getElementById("vehicle-reg").addEventListener("input", (e) => {
+      state.vehicle = e.target.value;
+      saveMeta();
+    });
+
+    document.getElementById("week-selector").addEventListener("change", (e) => {
+      selectedWeekOffset = Number(e.target.value) || 0;
+      renderDays();
+    });
+
+    document.getElementById("btn-prev-week").addEventListener("click", () => {
+      selectedWeekOffset -= 1;
+      populateWeekSelector();
+      renderDays();
+    });
+
+    document.getElementById("btn-next-week").addEventListener("click", () => {
+      selectedWeekOffset += 1;
+      populateWeekSelector();
+      renderDays();
+    });
+
+    document.getElementById("btn-save-draft").addEventListener("click", () => {
+      const drafts = getDrafts();
+      drafts.unshift({
+        id: String(Date.now()),
+        savedAt: new Date().toLocaleString("fi-FI"),
+        selectedWeekOffset,
+        data: JSON.parse(JSON.stringify(state))
+      });
+      setDrafts(drafts);
+      alert("Keskeneräinen tuntilappu tallennettu muistiin.");
+    });
+
+    document.getElementById("btn-open-draft").addEventListener("click", () => {
+      const drafts = getDrafts();
+      if (!drafts.length) {
+        alert("Ei tallennettuja keskeneräisiä luonnoksia.");
+        return;
+      }
+      const latest = drafts[0];
+      state = JSON.parse(JSON.stringify(latest.data));
+      selectedWeekOffset = latest.selectedWeekOffset || 0;
+      document.getElementById("driver-name").value = state.driver || "";
+      document.getElementById("vehicle-reg").value = state.vehicle || "";
+      populateWeekSelector();
+      renderDays();
+    });
+
+    document.getElementById("btn-save-partial-pdf").addEventListener("click", () => {
+      const rec = createPdfRecord(true);
+      showPdfActionBox(rec);
+    });
+
+    document.getElementById("btn-finish-pdf").addEventListener("click", () => {
+      const rec = createPdfRecord(false);
+      showPdfActionBox(rec);
+      clearFormForNewWeek();
+    });
+
+    document.getElementById("btn-share-wa").addEventListener("click", () => {
+      const pdfs = getSavedPdfs();
+      const target = pdfs[0] || createPdfRecord(true);
+      showPdfActionBox(target);
+      shareRecordToWhatsApp(target);
+    });
+
+    document.getElementById("btn-clear-form").addEventListener("click", () => {
+      if (confirm("Tyhjennetäänkö lomake uutta viikkoa varten?")) {
+        clearFormForNewWeek();
+      }
+    });
+
+    document.getElementById("btn-toggle-files").addEventListener("click", () => {
+      const panel = document.getElementById("saved-files-panel");
+      panel.style.display = panel.style.display === "none" ? "block" : "none";
+      renderSavedFilesList();
+    });
+
+    loadSavedMeta();
+    document.getElementById("driver-name").value = state.driver || "";
+    document.getElementById("vehicle-reg").value = state.vehicle || "";
+    populateWeekSelector();
+    renderDays();
+    updateCounts();
+    renderSavedFilesList();
+  </script>
+</body>
+</html>
